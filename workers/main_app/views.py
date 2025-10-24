@@ -1,11 +1,17 @@
+from Scripts.bottle import Response
+from django.core.paginator import Paginator
 from django.shortcuts import render
+from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.response import Response
 
-from serializers import WorkerSerializer
-from models import Worker
-from filters import WorkerFilter
-from paginations import CustomPagination
-from permissions import IsAdmin, IsUser
+from .serializers import WorkerSerializer
+from .models import Worker
+from .filters import WorkerFilter
+from .paginations import CustomPagination
+from .permissions import IsAdmin, IsUser
+
+
 
 class WorkerView(APIView):
     """
@@ -13,8 +19,9 @@ class WorkerView(APIView):
     Required User permission
     """
     serializer_class = WorkerSerializer
-    pagination_class = WorkerPagination
-    permission_classes = [IsUser, IsAdmin]
+    pagination_class = CustomPagination
+    # permission_classes = [IsUser, IsAdmin]
+
 
     def get(self, request):
         workers = Worker.objects.all()
@@ -24,5 +31,8 @@ class WorkerView(APIView):
             paginator = self.pagination_class()
             paginated_qs = paginator.paginate_queryset(queryset, request)
             serializer = self.serializer_class(paginated_qs, many=True)
-            return paginator.get_paginated_response()
-        (id, first_name, middle_name, last_name, position, is_active)
+            return paginator.get_paginated_response(data=serializer.data)
+        else:
+            Response(data=filterset.errors, status=status.HTTP_404_NOT_FOUND)
+
+

@@ -17,7 +17,8 @@ class Worker(models.Model):
 class Position(models.Model):
     name = models.CharField(max_length=100)
 
-
+    def __str__(self):
+        return self.name
 # from faker import Faker
 # import random
 #

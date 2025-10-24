@@ -1,5 +1,5 @@
 from django.urls import path
-from views import WorkerView
+from .views import WorkerView
 
 urlpatterns = [
     path('', WorkerView.as_view(), name="workers"), #GET список работников
