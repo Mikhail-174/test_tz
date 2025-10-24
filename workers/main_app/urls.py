@@ -1,7 +1,8 @@
 from django.urls import path
+from views import WorkerView
 
 urlpatterns = [
-    #path('/api/workers/', views., name=workers), GET список работников
+    path('', WorkerView.as_view(), name="workers"), #GET список работников
     #path('/api/workers/', views., name=create_worker), POST создание работника
     #path('/api/workers/{id}/', views., name=worker_detail), GET детальная информация
     #path('/api/workers/{id}/', views., name=worker_update), PATCH — обновление
