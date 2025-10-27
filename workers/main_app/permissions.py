@@ -1,19 +1,14 @@
 from rest_framework import permissions
+from django.contrib.auth.models import Permission
 
-class IsUser(permissions.BasePermission):
-    def has_permission(self, request, view):
-        if request.user.is_authenticated:
-            return True
-        return False
+perms = ("main_app.add_position", "main_app.change_position", "main_app.delete_position", "main_app.view_position", "main_app.add_worker", "main_app.change_worker", "main_app.delete_worker", "main_app.view_worker")
 
+class IsAdminOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        return obj.user == request.user or request.user.is_superuser
-
-class IsAdmin(permissions.BasePermission):
-    def has_permission(self, request, view):
-        if request.user.is_authenticated:
+        if request.method in permissions.SAFE_METHODS:
             return True
-        return False
+        return request.user.has_perms(perms)
 
-    def has_object_permission(self, request, view, obj):
-        return obj.user == request.user or request.user.is_superuser
+
+
+

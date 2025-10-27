@@ -5,10 +5,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .serializers import WorkerSerializerRead, WorkerSerializerWrite
-from .models import Worker, Position
+from .models import Position, Worker
 from .filters import WorkerFilter
 from .paginations import CustomPagination
-from .permissions import IsAdmin, IsUser
+from .permissions import IsAdminOrReadOnly
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -65,7 +65,6 @@ class WorkerIDView(APIView):
     """Detail / Update / Delete worker"""
 
     serializer_class = WorkerSerializerWrite
-    serializer_class_read = WorkerSerializerRead
 
     def get_object(self, id):
         worker_uuid = id
@@ -80,7 +79,7 @@ class WorkerIDView(APIView):
         worker = self.get_object(id=kwargs['id'])
         if worker is None:
             return Response(data={"message": f"Worker with id {kwargs['id']} does not exist!"}, status=404)
-        serializer = self.serializer_class_read(worker)
+        serializer = self.serializer_class(worker)
         return Response(data=serializer.data, status=200)
 
     def patch(self, request, **kwargs):

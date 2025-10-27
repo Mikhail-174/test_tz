@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 import uuid
-from django.contrib.postgres.indexes import HashIndex
+
+from .managers import IsDeletedManager
+
 
 class Worker(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, db_index=True)
@@ -13,6 +15,10 @@ class Worker(models.Model):
     is_active = models.BooleanField(default=True)
     hired_date = models.DateField(auto_now_add=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, default=None)
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True)
+
+    objects = IsDeletedManager()
 
 class Position(models.Model):
     name = models.CharField(max_length=100)
