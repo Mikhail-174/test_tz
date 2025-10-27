@@ -11,7 +11,7 @@ class Worker(models.Model):
     email = models.EmailField(unique=True)
     position = models.ForeignKey('Position', on_delete=models.SET_NULL, null=True, db_index=True)
     is_active = models.BooleanField(default=True)
-    hired_date = models.DateField(auto_now_add=True)
+    hired_date = models.DateField(auto_now_add=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, default=None)
 
 class Position(models.Model):

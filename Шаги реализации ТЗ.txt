@@ -16,12 +16,12 @@
 Пагинация списка (размер страницы на ваше усмотрение)
 Список работников: отображать только базовые поля (id, first_name, middle_name, last_name, position, is_active)
 Фильтрация по is_active и position (обязательно)
-	вьюхи для
-	#path('/api/workers/', views., name=create_worker), POST создание работника
-	#path('/api/workers/{id}/', views., name=worker_detail), GET детальная информация
-	#path('/api/workers/{id}/', views., name=worker_update), PATCH — обновление
-	#path('/api/workers/{id}/', views., name=delete_worker), DELETE — удаление
-	--------------------КОММИТ--------------------
+	
+path('/api/workers/', views., name=create_worker), POST создание работника
+path('/api/workers/{id}/', views., name=worker_detail), GET детальная информация
+path('/api/workers/{id}/', views., name=worker_update), PATCH — обновление
+path('/api/workers/{id}/', views., name=delete_worker), DELETE — удаление	
+--------------------КОММИТ--------------------
 	Ролевая модель доступа:
 	User — только чтение (GET)
 	Admin — полный доступ (CRUD)
@@ -32,3 +32,16 @@
 	тесты для пагинации
 	тесты для фильтров
 	тесты для фильтров и пагинации
+
+
+{
+  "first_name": "Dima",
+  "middle_name": "Cotly",
+  "last_name": "Loginov",
+  "email": "dima_go_cotly@gmail.com",
+  "hired_date": ""2025-10-24"",
+   "position": {
+    "id": 0,
+    "name": "Junior Go Developer"
+  }
+}

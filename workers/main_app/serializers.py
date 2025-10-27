@@ -6,12 +6,37 @@ class PositionSerializer(serializers.ModelSerializer):
         model = Position
         fields = "__all__"
 
-class WorkerSerializer(serializers.ModelSerializer):
+class WorkerSerializerRead(serializers.ModelSerializer):
 
     position = PositionSerializer(read_only=True)
 
     class Meta:
         model = Worker
-        fields = ("id", "first_name", "middle_name", "last_name", "position", "is_active")
-        # fields = "__all__"
+        fields = ("id", "first_name", "middle_name", "last_name", "position", "is_active") #remove hired_date
+
+
+class WorkerSerializerWrite(serializers.ModelSerializer):
+
+    position = PositionSerializer()
+
+    class Meta:
+        model = Worker
+        fields = "__all__"
+
+
+    def update(self, instance, validated_data):
+        pos = validated_data.get('position')
+        pos_name = pos['name']
+        new_pos = Position.objects.get(name=pos_name)
+
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.middle_name = validated_data.get('middle_name', instance.middle_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.email = validated_data.get('email', instance.email)
+        instance.position = new_pos
+        instance.is_active = validated_data.get('is_active', instance.is_active)
+        instance.hired_date = validated_data.get('hired_date', instance.hired_date)
+        instance.created_by = instance.created_by
+        instance.save()
+        return instance
 
