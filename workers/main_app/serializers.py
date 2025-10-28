@@ -1,10 +1,19 @@
+from django.forms.fields import FileField
 from rest_framework import serializers
+
 from .models import Worker, Position
 
 class PositionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Position
         fields = "__all__"
+
+class PositionImportSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Position
+        exclude = ('pk', 'id')
+
 
 class WorkerSerializerRead(serializers.ModelSerializer):
 
@@ -13,7 +22,6 @@ class WorkerSerializerRead(serializers.ModelSerializer):
     class Meta:
         model = Worker
         fields = ("id", "first_name", "middle_name", "last_name", "position", "is_active") #remove hired_date
-
 
 class WorkerSerializerWrite(serializers.ModelSerializer):
 
@@ -40,3 +48,11 @@ class WorkerSerializerWrite(serializers.ModelSerializer):
         instance.save()
         return instance
 
+class WorkerImportWriteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Worker
+        fields = ("first_name","middle_name","last_name","email", "is_active", "hired_date", "created_by","is_deleted", "deleted_at")
+
+class ExcelFileSerializer(serializers.Serializer):
+    file = serializers.FileField(allow_empty_file=False)
