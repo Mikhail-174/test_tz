@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib import admin
+from django.utils import timezone
+
 import uuid
+import datetime
 
 from .managers import IsDeletedManager
 
@@ -13,18 +17,50 @@ class Worker(models.Model):
     email = models.EmailField(unique=True)
     position = models.ForeignKey('Position', on_delete=models.SET_NULL, null=True, db_index=True)
     is_active = models.BooleanField(default=True)
-    hired_date = models.DateField(auto_now_add=True, blank=True)
+    hired_date = models.DateTimeField(auto_now_add=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, default=None)
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True)
 
     objects = IsDeletedManager()
 
+    def __str__(self):
+        return f"{self.email}"
+
+    @admin.display(
+        boolean=True,
+        ordering="position",
+        description="Developers",
+    )
+    def is_a_developer(self):
+        return 'developer' in self.position.name.lower()
+
+    @admin.display(
+        boolean=True,
+        ordering="hired_date",
+        description="Recently hired?",
+    )
+    def was_hired_recently(self):
+        now = timezone.now()
+        return now - datetime.timedelta(days=1) <= self.hired_date <= now
+
+
+    class Meta:
+        verbose_name = "Работник"
+        verbose_name_plural = "Работники"
+
 class Position(models.Model):
     name = models.CharField(max_length=100)
+    # name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = "Должность"
+        verbose_name_plural = "Должности"
+
+
 # from faker import Faker
 # import random
 #

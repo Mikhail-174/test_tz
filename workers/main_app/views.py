@@ -122,6 +122,15 @@ class WorkerImportView(APIView):
         dict_list = dataframe.to_dict(orient='records')
         return dict_list
 
+    def serializer_error_parser(self, error_dict):
+        error_log_string = ""
+        for error_reason, value_list in error_dict.items():
+            error_log_string += f"{error_reason}:\n"
+            for value in value_list:
+                error_log_string += f"\t{value}\n"
+        return error_log_string
+
+
     def post(self, request):
         # user = request.user
 
@@ -155,13 +164,14 @@ class WorkerImportView(APIView):
                         )
                         new_worker.save()
                     else:
-                        error_records.append(f"{serializer.errors} - {record}")
+                        error_records.append(self.serializer_error_parser(serializer.errors))
                 except Exception as error:
-                    error_records.append(f"{error} - {record}")
+                    error_records.append(self.serializer_error_parser(serializer.errors))
 
             print(*error_records, sep='\n')
+            print(f"New workers count: {new_workers_count - len(error_records)}")
             if new_workers_count == len(error_records):
                 return Response(data={"message": "Unsuccess file reading"}, status=400)
             return Response(data={"message": "success file uploaded"}, status=200)
         else:
-            return Response(data=serializer.errors, status=400)
+            return Response(data=file_serializer.errors, status=400)
