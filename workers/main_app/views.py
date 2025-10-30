@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 import pandas as pd
+from django_filters import rest_framework as filters
 
 from datetime import datetime
 
@@ -28,10 +29,12 @@ class WorkerView(APIView):
 
     pagination_class = CustomPagination
     permission_classes = [IsAdminOrReadOnly]
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = WorkerFilter
 
     def get(self, request):
         workers = Worker.objects.all()
-        filterset = WorkerFilter(request.query_params, queryset=workers)
+        filterset = self.filterset_class(request.query_params, queryset=workers)
         if filterset.is_valid():
             queryset = filterset.qs
             paginator = self.pagination_class()
@@ -77,7 +80,6 @@ class WorkerIDView(APIView):
         worker_uuid = id
         try:
             worker = Worker.objects.get(id=worker_uuid)
-
         except ObjectDoesNotExist:
             return None
         else:
@@ -99,13 +101,13 @@ class WorkerIDView(APIView):
             print(serializer.errors)
             return Response(data=serializer.errors, status=400)
         serializer.save()
-        return Response(data=serializer.data, status=204)
+        return Response(data=serializer.validated_data, status=204)
 
     def delete(self, request, **kwargs):
         worker = self.get_object(id=kwargs['id'])
         if worker is None:
             return Response(data={"message": f"Worker with id {kwargs['id']} does not exist!"}, status=404)
-        worker.delete()
+        Worker.objects.get(id=kwargs['id']).delete()
         return Response(data={"message": f"Worker with id = {kwargs['id']} deleted successfully!"}, status=200)
 
 class WorkerImportView(APIView):

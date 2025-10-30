@@ -7,5 +7,5 @@ from .models import Worker, Position
 def broadcast_worker_created(sender, instance, created, **kwargs):
     if created:
         fn, ln, email = instance.first_name, instance.last_name, instance.email
-        print(f"New Worker created: first name({fn}), last name({ln}), email({email})")
+        print(f"New Worker created: Worker({fn} {ln}, {email}) | Creator({instance.created_by})")
 

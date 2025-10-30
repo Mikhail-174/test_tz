@@ -24,6 +24,14 @@ class Worker(models.Model):
 
     objects = IsDeletedManager()
 
+    def delete(self, *args, **kwargs):
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save(update_fields=["is_deleted", "deleted_at"])
+
+    def hard_delete(self, *args, **kwargs):
+        super().delete(*args, **kwargs)
+
     def __str__(self):
         return f"{self.email}"
 
@@ -44,10 +52,10 @@ class Worker(models.Model):
         now = timezone.now()
         return now - datetime.timedelta(days=1) <= self.hired_date <= now
 
-
     class Meta:
         verbose_name = "Работник"
         verbose_name_plural = "Работники"
+        ordering = ['hired_date']
 
 class Position(models.Model):
     name = models.CharField(max_length=100)
