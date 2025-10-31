@@ -38,8 +38,8 @@ Endpoints:
       {
         "message": "Worker created successful!"
       }
-		<img width="172" height="54" alt="image" src="https://github.com/user-attachments/assets/01cddeea-315f-468e-b09a-24a827d1b8b1" />
-    <img width="651" height="300" alt="авторизация" src="https://github.com/user-attachments/assets/df6cd78b-4c72-4972-87ac-ca4e8fd09811" />
+<img width="172" height="54" alt="image" src="https://github.com/user-attachments/assets/01cddeea-315f-468e-b09a-24a827d1b8b1" />
+<img width="651" height="300" alt="авторизация" src="https://github.com/user-attachments/assets/df6cd78b-4c72-4972-87ac-ca4e8fd09811" />
 		Добавлено уведомление в консоли при создании работника
     ----------------------------------------------------------------------
 	GET /api/workers/{id}/ — детальная информация
@@ -101,12 +101,14 @@ Endpoints:
 		Добавлен поиск
 		Есть возможность для редактирования поля is_acitve прямо из списка
 		Добавлен фильтр по полю Developers - работники с "developer" в имени позиции и Recently hired - недавно добавленные работники
-		<img width="1891" height="552" alt="админка" src="https://github.com/user-attachments/assets/cfab110e-6998-4df9-acbf-d63b4c0dfe8c" />
+<img width="1891" height="552" alt="админка" src="https://github.com/user-attachments/assets/cfab110e-6998-4df9-acbf-d63b4c0dfe8c" />
 		
     ----------------------------------------------------------------------
 	
 	GET /api/docs/
 		Предоставляет удобный графический интерфейс Swagger UI для просмотра и тестирования API.
+<img width="931" height="920" alt="image" src="https://github.com/user-attachments/assets/c577c18f-846a-426a-af1c-3fc6e3dea01b" />
+
 Tests:
 
 	Добавлены тесты для пагинации
