@@ -4,9 +4,11 @@
 	Добавлена модель данных Position - должности
 
 TechStack:
+
 	Python 3.14-alpine3.22
 	Django 5 + Django REST Framework
 	БД PostgreSQL:15
+	
 Endpoints:
 	Приложение поддерживает следующий список эндпоинтов:
 	
