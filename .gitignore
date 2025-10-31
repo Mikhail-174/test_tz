@@ -8,3 +8,6 @@
 # Virtual environments
 .env
 .venv
+
+# ide
+.idea/
