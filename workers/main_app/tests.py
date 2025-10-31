@@ -198,7 +198,7 @@ class WorkerTests(TestCase):
             }
             response = self.client.patch(url, data=data, format="json")
             worker = Worker.objects.get(id=user_uuid)
-            self.assertEqual(response.status_code, 204)
+            self.assertEqual(response.status_code, 200)
             self.assertEqual(worker.first_name.startswith("new_"), True)
 
             response = self.client.delete(url)

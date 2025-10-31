@@ -102,7 +102,7 @@ class WorkerIDView(APIView):
             print(serializer.errors)
             return Response(data=serializer.errors, status=400)
         serializer.save()
-        return Response(data=serializer.validated_data, status=204)
+        return Response(data=serializer.validated_data, status=200)
 
     def delete(self, request, **kwargs):
         worker = self.get_object(id=kwargs['id'])

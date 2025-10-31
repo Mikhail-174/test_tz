@@ -43,9 +43,9 @@ Django Admin - слабо через доку - не слабо
 .env файл 
 изменить базу на PostgreSQL
 requirements.txt
-	докер файл
-	gitignore файл и dockerignore файлы
-	--------------------КОММИТ--------------------
+докер файл
+gitignore файл и dockerignore файлы
+--------------------КОММИТ--------------------
 	pyproject.toml и poetry.lock - спросить у чата
 	рефакторинг
 	--------------------КОММИТ--------------------
@@ -60,14 +60,51 @@ requirements.txt
 
 
 
+
+POST api/workers/
 {
-  "first_name": "Dima",
-  "middle_name": "Cotly",
-  "last_name": "Loginov",
-  "email": "dima_go_cotly@gmail.com",
-  "hired_date": ""2025-10-24"",
-   "position": {
-    "id": 0,
-    "name": "Junior Go Developer"
-  }
+  "position": {
+    "name": "Developer"
+  },
+  "first_name": "Михаил",
+  "middle_name": "Петрович",
+  "last_name": "Валуев",
+  "email": "exampleuser@example.com"
+}
+#Успешный ответ
+{
+  "message": "Worker created successful!"
+}
+
+
+PATCH api/workers/2f155ecd-0238-4ab3-8d90-ffccb1739f6e
+{
+  "position": {
+    "id": 2,
+    "name": "Developer"
+  },
+  "first_name": "Николай",
+  "middle_name": "Сергеевич",
+  "last_name": "Валуев",
+  "email": "boxking@example.com",
+  "is_active": false
+}
+
+#Успешный ответ
+{
+  "id": "2f155ecd-0238-4ab3-8d90-ffccb1739f6e",
+  "position": {
+    "name": "Developer"
+  },
+  "first_name": "Николай",
+  "middle_name": "Сергеевич",
+  "last_name": "Валуев",
+  "email": "bdodxking@example.com",
+  "is_active": false
+}
+
+DELETE http://localhost:8000/api/workers/2f155ecd-0238-4ab3-8d90-ffccb1739f6e/
+#Успешный ответ
+{
+  "message": "Worker with id = 2f155ecd-0238-4ab3-8d90-ffccb1739f6e deleted successfully!"
 }
