@@ -1,0 +1,14 @@
+# realisaton notes
+ТЗ.txt
+Шаги реализации ТЗ.txt
+
+# ide
+.idea/
+
+# Virtual envieronment
+djvenv
+
+.git/
+.gitignore
+*/Dockerfile*
+.dockerignore

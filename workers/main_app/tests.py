@@ -12,10 +12,12 @@ from .serializers import WorkerSerializerWrite, WorkerSerializerRead, WorkerImpo
 from .paginations import CustomPagination
 
 import requests
+import os
 import random
 import math
 import json
 import uuid
+from pathlib import Path
 
 namespaces = ("workers", "worker_RUD", "excel_import")
 position_names = ("Senior Developer", "Project Manager", "DevOps Engineer", "UX/UI Designer", "Data Scientist", "QA Engineer", "Team Lead", "Frontend Developer", "Backend Developer", "HR Manager", "Mobile Developer", "Product Manager", "System Administrator", "Marketing Specialist", "Security Engineer", "Business Analyst", "Database Administrator")
@@ -42,8 +44,7 @@ class WorkerTests(TestCase):
         admin_user = get_user_model().objects.create(
             username="test_admin",
             password="testpassword1234")
-        Group.objects.create(name="Admin")
-        admin_group = Group.objects.get(name="Admin")
+        admin_group, _ = Group.objects.get_or_create(name="Admin")
         all_perms = Permission.objects.all()
         for perm in all_perms:
             if "main_app" in perm.natural_key() and "worker" in perm.natural_key():
@@ -127,37 +128,18 @@ class WorkerTests(TestCase):
             user with no permissions can't create Workers
             user with Admin group - can"""
         url = reverse(namespaces[0])
-        # creep_user = get_user_model().objects.create(
-        #     username="test_user",
-        #     password="testpassword1234")
-        # admin_user = get_user_model().objects.create(
-        #     username="test_admin",
-        #     password="testpassword1234")
-        # Group.objects.create(name="Admin")
-        # admin_group = Group.objects.get(name="Admin")
-        # all_perms = Permission.objects.all()
-        # for perm in all_perms:
-        #     if "main_app" in perm.natural_key() and "worker" in perm.natural_key():
-        #         admin_group.permissions.add(perm)
-        #     if "main_app" in perm.natural_key() and "position" in perm.natural_key():
-        #         admin_group.permissions.add(perm)
-        # admin_user.groups.add(admin_group)
         creep_user, admin_user = self.user_admin_producer()
-
         self.client.force_authenticate(user=creep_user)
-
         data = {
           "position": {
-            "name": f"{random.choice(self.positions)}"
-          },
+            "name": f"{random.choice(self.positions)}"},
           "first_name": self.the_fake.first_name(),
           "last_name": self.the_fake.last_name(),
-          "email": self.the_fake.email(),
-        }
+          "email": self.the_fake.email(),}
         response = self.client.post(path=url, data=data, format="json")
         self.assertIn(response.status_code, (403,))
 
-        # resert user
+        # reset user
         self.client.force_authenticate(user=None)
 
         self.client.force_authenticate(user=admin_user)
@@ -219,7 +201,6 @@ class WorkerTests(TestCase):
             self.assertEqual(response.status_code, 204)
             self.assertEqual(worker.first_name.startswith("new_"), True)
 
-
             response = self.client.delete(url)
             deleted_worker = Worker.objects.unfiltered().get(id=user_uuid)
             self.assertEqual(response.status_code, 200)
@@ -233,16 +214,33 @@ class WorkerTests(TestCase):
             response = self.client.delete(url, format="json")
             self.assertEqual(response.status_code, 404)
 
+    def test_import_excel(self):
+        """Test WorkerImportView
+            import excel-file doesn't be processing
+            if user has no Admin permissions
+            user with Admin group - can"""
+        view = WorkerImportView
+        url = reverse(namespaces[2])
+        creep_user, admin_user = self.user_admin_producer()
+        test_imports_path = Path(__file__).resolve().parent.parent / 'test_imports'
+        path_files = os.listdir(path=test_imports_path)
 
+        self.client.force_authenticate(user=creep_user)
+        for file in path_files:
+            if file.endswith(".xlsx"):
+                file_path = test_imports_path / file
+                excel_file_data = {'file': open(file_path, 'rb')}
+                response = self.client.post(url, data=excel_file_data)
 
+                self.assertEqual(response.status_code, 403)
 
-# url = "http://localhost:8000/api/workers/import/"
-# files = {'file': open('C:/Users/Дорофеев Михаил/PycharmProjects/workers/workers/example_import.xlsx', 'rb')}
-# # headers = {
-# #     'Authorization': 'Token your_token'  # если требуется
-# # }
-#
-# response = requests.post(url, files=files)
-# print(response.status_code)
-# print(response.json())
-
+        self.client.force_authenticate(user=None)
+        self.client.force_authenticate(user=admin_user)
+        for file in path_files:
+            if file.endswith(".xlsx"):
+                file_path = test_imports_path / file
+                excel_file_data = {'file': open(file_path, 'rb')}
+                print("-" * 80)
+                response = self.client.post(url, data=excel_file_data)
+                print("-" * 80)
+                self.assertEqual(response.status_code, 200)

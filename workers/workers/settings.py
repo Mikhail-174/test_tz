@@ -9,24 +9,24 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import os
+from os import environ
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env_path = BASE_DIR.parent / '.env'
+load_dotenv(env_path)
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2tj=u%=m29tackxox@=#42-so9^4%w^)1d$%&o^0oh%@cs70xa'
+SECRET_KEY = environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = environ.get("DEBUG")
 
-ALLOWED_HOSTS = []
-
+allowed_hosts_str = os.environ.get("DJANGO_ALLOWED_HOSTS", "")
+ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_str.split()] if allowed_hosts_str else []
 
 # Application definition
 
@@ -81,8 +81,12 @@ WSGI_APPLICATION = 'workers.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': environ.get("SQL_ENGINE"),
+        'NAME': environ.get("SQL_DATABASE"),
+        'USER': environ.get('SQL_USER'),
+        'PASSWORD': environ.get('SQL_PASSWORD'),
+        'HOST': environ.get('SQL_HOST'),
+        'PORT': environ.get('SQL_PORT'),
     }
 }
 
@@ -130,13 +134,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # debug_tool/settings.py
 INTERNAL_IPS = [
-    '127.0.0.1',
+    environ.get("INTERNAL_IPS"),
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',   # New
-    # 'PAGE_SIZE': 2   # New
 }

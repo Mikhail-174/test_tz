@@ -1,0 +1,10 @@
+ТЗ.txt
+Шаги реализации ТЗ.txt
+
+# Database
+.db
+*.sqlite3
+
+# Virtual environments
+.env
+.venv

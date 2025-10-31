@@ -71,7 +71,8 @@ class WorkerView(APIView):
 
 
 class WorkerIDView(APIView):
-    """Detail / Update / Delete worker"""
+    """Detail / Update / Delete worker
+    Required User permission on patch and delete methods"""
 
     serializer_class = WorkerSerializerWrite
     permission_classes = [IsAdminOrReadOnly]
@@ -114,10 +115,8 @@ class WorkerImportView(APIView):
     """View for creating objects from imported Excel files"""
     serializer_class = ExcelFileSerializer
     serializer_class_write = WorkerImportWriteSerializer
-    # permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
     parser_classes = [MultiPartParser, FormParser]  # Важно для загрузки файлов!
-
-
 
     def parse_excel_to_dict_list(self, file):
         dataframe = pd.read_excel(file)
@@ -134,13 +133,11 @@ class WorkerImportView(APIView):
 
 
     def post(self, request):
-        # user = request.user
-
+        user = request.user
         file_serializer = self.serializer_class(data=request.data)
         if file_serializer.is_valid():
             serializer_file_data = file_serializer.validated_data
             file_name = serializer_file_data['file']
-
             new_workers = self.parse_excel_to_dict_list(file_name)
             error_records = list()
             new_workers_count = len(new_workers)
@@ -154,7 +151,6 @@ class WorkerImportView(APIView):
                     if serializer.is_valid():
                         data = serializer.validated_data
                         position, _ = Position.objects.get_or_create(name=record['position'])
-                        # hired_date = datetime.fromtimestamp(data['hired_date'].timestamp())
                         new_worker = Worker(
                             first_name=data['first_name'],
                             middle_name=data.get('middle_name', ''),
@@ -162,7 +158,7 @@ class WorkerImportView(APIView):
                             email=data['email'],
                             position=position,
                             hired_date=data.get("hired_date", None),
-                            # created_by=user,
+                            created_by=user,
                         )
                         new_worker.save()
                     else:
